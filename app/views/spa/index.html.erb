@@ -1,3 +1,11 @@
-<%= content_tag(:div, "",id:"app", data:{
-    controller: "main",
-})%>
+<style>
+
+    .demo-logo-vertical {
+    height: 32px;
+    margin: 16px;
+    background: rgba(255, 255, 255, .2);
+    border-radius: 6px;
+}
+</style>
+<%= csrf_meta_tags %>
+<%= content_tag(:div, "", data: { controller: "main" }) %>

@@ -26,16 +26,18 @@ const iconStyles = {
 };
 
 const Page = () => {
-  const [loginType, setLoginType] = useState("phone");
+
   const { token } = theme.useToken();
     // 登录提交处理：POST /sessions，带 X-CSRF-Token
   const handleSubmit = async (values) => {
     try {
       const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
-      const payload = loginType === "account"
-        ? { email: values.username, password: values.password }
-        : { mobile: values.mobile, captcha: values.captcha };
-
+      // 将 autoLogin 一并提交（ProFormCheckbox 名为 autoLogin）
+      const payload = {
+        username: values.username,
+        password: values.password,
+        autoLogin: !!values.autoLogin
+      };
       const res = await fetch("/sessions", {
         method: "POST",
         headers: {
@@ -49,7 +51,7 @@ const Page = () => {
       if (res.ok) {
         const data = await res.json();
         message.success("登录成功");
-        // 登录成功后跳回 SPA 根，React SPA 会通过 /sessions/current 初始化用户状态
+        // 登录成功后跳回 SPA 根
         window.location.href = "/";
       } else {
         const err = await res.json().catch(() => ({}));
@@ -103,80 +105,8 @@ const Page = () => {
             </Button>
           ),
         }}
-        actions={
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-            }}
-          >
-            <Divider plain>
-              <span
-                style={{
-                  color: token.colorTextPlaceholder,
-                  fontWeight: "normal",
-                  fontSize: 14,
-                }}
-              >
-                其他登录方式
-              </span>
-            </Divider>
-            <Space align="center" size={24}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "column",
-                  height: 40,
-                  width: 40,
-                  border: "1px solid " + token.colorPrimaryBorder,
-                  borderRadius: "50%",
-                }}
-              >
-                <AlipayOutlined style={{ ...iconStyles, color: "#1677FF" }} />
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "column",
-                  height: 40,
-                  width: 40,
-                  border: "1px solid " + token.colorPrimaryBorder,
-                  borderRadius: "50%",
-                }}
-              >
-                <TaobaoOutlined style={{ ...iconStyles, color: "#FF6A10" }} />
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "column",
-                  height: 40,
-                  width: 40,
-                  border: "1px solid " + token.colorPrimaryBorder,
-                  borderRadius: "50%",
-                }}
-              >
-                <WeiboOutlined style={{ ...iconStyles, color: "#1890ff" }} />
-              </div>
-            </Space>
-          </div>
-        }
+        onFinish={async (values) =>handleSubmit(values)}
       >
-        <Tabs
-          items={[
-            { key: "account", label: "账号密码登录" },
-            { key: "phone", label: "手机号登录" },
-          ]}
-        />
-        {loginType === "account" && (
           <>
             <ProFormText
               name="username"
@@ -221,69 +151,7 @@ const Page = () => {
               ]}
             />
           </>
-        )}
-        {loginType === "phone" && (
-          <>
-            <ProFormText
-              fieldProps={{
-                size: "large",
-                prefix: (
-                  <MobileOutlined
-                    style={{
-                      color: token.colorText,
-                    }}
-                    className={"prefixIcon"}
-                  />
-                ),
-              }}
-              name="mobile"
-              placeholder={"手机号"}
-              rules={[
-                {
-                  required: true,
-                  message: "请输入手机号！",
-                },
-                {
-                  pattern: /^1\d{10}$/,
-                  message: "手机号格式错误！",
-                },
-              ]}
-            />
-            <ProFormCaptcha
-              fieldProps={{
-                size: "large",
-                prefix: (
-                  <LockOutlined
-                    style={{
-                      color: token.colorText,
-                    }}
-                    className={"prefixIcon"}
-                  />
-                ),
-              }}
-              captchaProps={{
-                size: "large",
-              }}
-              placeholder={"请输入验证码"}
-              captchaTextRender={(timing, count) => {
-                if (timing) {
-                  return `${count} ${"获取验证码"}`;
-                }
-                return "获取验证码";
-              }}
-              name="captcha"
-              rules={[
-                {
-                  required: true,
-                  message: "请输入验证码！",
-                },
-              ]}
-              onGetCaptcha={async () => {
-                message.success("获取验证码成功！验证码为：1234");
-              }}
-            />
-          </>
-        )}
+  
         <div
           style={{
             marginBlockEnd: 24,

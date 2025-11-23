@@ -1,2 +1,23 @@
 <%= csrf_meta_tags %>
-<%= content_tag(:div, "",  data: { controller: "login" }) %>
+<%= content_tag(:div, "", data: { controller: "login" }) %>
+
+<script>
+  // 双重保险：如果后端未重定向（如 JS 客户端场景），客户端也检查登录状态并跳转到首页
+  (async function(){
+    try {
+      const res = await fetch("/sessions/current", {
+        headers: { "Accept": "application/json" },
+        credentials: "same-origin"
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.user) {
+          window.location.href = "/";
+        }
+      }
+    } catch (e) {
+      // 忽略网络错误
+      console.debug("sessions/current check failed", e);
+    }
+  })();
+</script>
