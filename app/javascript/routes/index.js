@@ -3,12 +3,13 @@ import { createBrowserRouter } from "react-router";
 import Dashboard from '../components/dashboard';
 import Error404 from '../pages/error404';
 
-import GigManage from '../pages/dashboard/gigManage';
-import GigGroup from '../pages/dashboard/gigGroup';
-import GigTags from '../pages/dashboard/gigTags';
-import LateManager from '../pages/dashboard/lateManage';
-import CCLateManager from '../pages/dashboard/ccLateManage';
-import DataCenter from '../pages/dashboard/dataCenter';
+const DataCenter = React.lazy(() => import('../pages/dashboard/dataCenter'));
+const GigManage = React.lazy(() => import('../pages/dashboard/gigManage'));
+const GigGroup = React.lazy(() => import('../pages/dashboard/gigGroup'));
+const GigTags = React.lazy(() => import('../pages/dashboard/gigTags'));
+const LateManager = React.lazy(() => import('../pages/dashboard/lateManage'));
+const CCLateManager = React.lazy(() => import('../pages/dashboard/ccLateManage'));
+
 
 
 export const CHILD_ROUTES = [

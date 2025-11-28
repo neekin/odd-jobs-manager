@@ -69,6 +69,17 @@ function Sidebar({ collapsed = false }) {
           const to = route.index ? "/" : `/${route.path}`;
           navigate(to);
         }}
+        // 预取：鼠标移入时加载对应 chunk，减少点击等待
+        onMouseEnter={(e) => {
+          const item = e.target.closest('[data-menu-key]');
+          if (!item) return;
+          const key = item.getAttribute('data-menu-key');
+          const route = menuRoutes.find((r) => r.meta.key === key);
+          if (route && route.path) {
+            // 根据 path 做一次动态 import 的预取（与 routes 中的懒加载路径对应）
+            import(`../pages/dashboard/${route.path}`).catch(() => {});
+          }
+        }}
       />
     </Sider>
   );

@@ -1,5 +1,4 @@
-import React from 'react'
-import { useState } from "react";
+import React, { Suspense, useState } from 'react'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -51,7 +50,10 @@ const App = ({children}) => {
             borderRadius: borderRadiusLG,
           }}
         >
-          <Outlet />
+               {/* 在这里展示 Suspense fallback，按需加载子路由时用户看到加载态 */}
+         <Suspense fallback={<div>加载中...</div>}>
+           <Outlet />
+          </Suspense>
         </Content>
       </Layout>
     </Layout>
