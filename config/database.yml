@@ -39,3 +39,13 @@ production:
     <<: *default
     database: storage/production_cable.sqlite3
     migrations_paths: db/cable_migrate
+
+database_external:
+  adapter: mysql2
+  encoding: utf8mb4
+  pool: 5
+  username: cdwl99.cdwl99.comcom
+  password: JHBAEEzadh8iXRJ7
+  host: 39.96.171.161
+  database: cdwl99.com
+  port: 3306

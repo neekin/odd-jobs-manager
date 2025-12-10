@@ -9,7 +9,14 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   root "spa#index"
-
+  namespace :api, defaults: { format: :json } do
+    namespace :v2 do
+      get "health", to: "health#show"
+      resources :users, only: [ :index, :show ]
+      resources :groups, only: [ :index ]
+      # 按需在这里增加更多资源，例如 sessions, gigs 等
+    end
+  end
 
 
   # 登录相关
